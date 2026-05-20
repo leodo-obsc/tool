@@ -1,16 +1,17 @@
-namespace SignService.Common.HashSignature.Common;
-
-public enum LogFileType
+namespace SignService.Common.HashSignature.Common
 {
-	TRACE,
-	MESSAGE,
-	EXCEPTION,
-	PROCESS,
-	KYSO,
-	GUI,
-	XUATFILE,
-	UPDATE,
-	BACKUP,
-	LOGSERVICE,
-	EXCEPTIONSignService
+    public enum LogFileType
+    {
+    	TRACE,
+    	MESSAGE,
+    	EXCEPTION,
+    	PROCESS,
+    	KYSO,
+    	GUI,
+    	XUATFILE,
+    	UPDATE,
+    	BACKUP,
+    	LOGSERVICE,
+    	EXCEPTIONSignService
+    }
 }

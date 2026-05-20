@@ -1,5 +1,6 @@
-namespace SignService.Common.HashSignature.Interface;
-
-public class BaseValidator
+namespace SignService.Common.HashSignature.Interface
 {
+    public class BaseValidator
+    {
+    }
 }

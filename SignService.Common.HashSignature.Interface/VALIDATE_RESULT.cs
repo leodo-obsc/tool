@@ -1,9 +1,10 @@
-namespace SignService.Common.HashSignature.Interface;
-
-public enum VALIDATE_RESULT
+namespace SignService.Common.HashSignature.Interface
 {
-	verifySuccess,
-	verifyFailed,
-	verifyNotFoundSig,
-	verifyBadInput
+    public enum VALIDATE_RESULT
+    {
+    	verifySuccess,
+    	verifyFailed,
+    	verifyNotFoundSig,
+    	verifyBadInput
+    }
 }

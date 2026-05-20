@@ -1,45 +1,46 @@
 using System.Collections.Generic;
 using SignService.Common.HashSignature.Common;
 
-namespace SignService.Common.HashSignature.Interface;
-
-public interface IHashSigner
+namespace SignService.Common.HashSignature.Interface
 {
-	string GetSecondHashAsBase64();
+    public interface IHashSigner
+    {
+    	string GetSecondHashAsBase64();
 
-	byte[] GetSecondHashBytes();
+    	byte[] GetSecondHashBytes();
 
-	SignerProfile GetSignerProfile();
+    	SignerProfile GetSignerProfile();
 
-	bool CheckHashSignature(byte[] signedBytes);
+    	bool CheckHashSignature(byte[] signedBytes);
 
-	bool CheckHashSignature(string signedHashBase64);
+    	bool CheckHashSignature(string signedHashBase64);
 
-	bool CheckHashSignature(byte[] hashValue, string signedHashBase64);
+    	bool CheckHashSignature(byte[] hashValue, string signedHashBase64);
 
-	bool CheckHashSignature(SignerProfile profile, byte[] signedBytes);
+    	bool CheckHashSignature(SignerProfile profile, byte[] signedBytes);
 
-	byte[] Sign(string signedHashBase64);
+    	byte[] Sign(string signedHashBase64);
 
-	byte[] Sign(byte[] signedBytes);
+    	byte[] Sign(byte[] signedBytes);
 
-	byte[] Sign(SignerProfile profile, byte[] signedBytes);
+    	byte[] Sign(SignerProfile profile, byte[] signedBytes);
 
-	void SetHashAlgorithm(MessageDigestAlgorithm alg);
+    	void SetHashAlgorithm(MessageDigestAlgorithm alg);
 
-	void SetOcspRespnse(byte[] ocsp);
+    	void SetOcspRespnse(byte[] ocsp);
 
-	void SetCrlResponse(ICollection<byte[]> clrs);
+    	void SetCrlResponse(ICollection<byte[]> clrs);
 
-	void EnableLTV(ICollection<byte[]> ocsps, ICollection<byte[]> clrs);
+    	void EnableLTV(ICollection<byte[]> ocsps, ICollection<byte[]> clrs);
 
-	void EnableLTV(bool addDocumentLvTimestamp);
+    	void EnableLTV(bool addDocumentLvTimestamp);
 
-	bool SetSignerCertchain(string pkcs7Base64);
+    	bool SetSignerCertchain(string pkcs7Base64);
 
-	bool SetSignerCertchain(ICollection<string> certs);
+    	bool SetSignerCertchain(ICollection<string> certs);
 
-	void EnableTimestamp();
+    	void EnableTimestamp();
 
-	string GetSignerSubjectDN();
+    	string GetSignerSubjectDN();
+    }
 }

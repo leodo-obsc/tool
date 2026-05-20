@@ -1,34 +1,35 @@
 using iTextSharp.text.pdf.security;
 
-namespace SignService.Common.HashSignature.Common;
-
-public class ExternalSignatureImpl : IExternalSignature
+namespace SignService.Common.HashSignature.Common
 {
-	private string _hashAlgorithm;
+    public class ExternalSignatureImpl : IExternalSignature
+    {
+    	private string _hashAlgorithm;
 
-	private string _encryptionAlgorithm;
+    	private string _encryptionAlgorithm;
 
-	private byte[] _signature;
+    	private byte[] _signature;
 
-	public ExternalSignatureImpl(string hash, string encrypt, byte[] signature)
-	{
-		_hashAlgorithm = hash;
-		_encryptionAlgorithm = encrypt;
-		_signature = signature;
-	}
+    	public ExternalSignatureImpl(string hash, string encrypt, byte[] signature)
+    	{
+    		_hashAlgorithm = hash;
+    		_encryptionAlgorithm = encrypt;
+    		_signature = signature;
+    	}
 
-	public string GetEncryptionAlgorithm()
-	{
-		return _hashAlgorithm;
-	}
+    	public string GetEncryptionAlgorithm()
+    	{
+    		return _hashAlgorithm;
+    	}
 
-	public string GetHashAlgorithm()
-	{
-		return _encryptionAlgorithm;
-	}
+    	public string GetHashAlgorithm()
+    	{
+    		return _encryptionAlgorithm;
+    	}
 
-	public byte[] Sign(byte[] message)
-	{
-		return _signature;
-	}
+    	public byte[] Sign(byte[] message)
+    	{
+    		return _signature;
+    	}
+    }
 }

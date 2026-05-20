@@ -1,5 +1,6 @@
-namespace SignService.Common.HashSignature.Certificate;
-
-public class CrlClient
+namespace SignService.Common.HashSignature.Certificate
 {
+    public class CrlClient
+    {
+    }
 }
