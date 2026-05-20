@@ -1,9 +1,9 @@
 namespace SignService.Common.HashSignature.Certificate
 {
-    public enum OcspCertStatus
-    {
-    	GOOD,
-    	REVOKED,
-    	UNKNOWN
-    }
+	public enum OcspCertStatus
+	{
+		GOOD,
+		REVOKED,
+		UNKNOWN
+	}
 }

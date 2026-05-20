@@ -29,3 +29,11 @@ C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignServi
 C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.sourcelink.json
 C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.dll
 C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.pdb
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\bin\Debug\net472\SignService.Common.HashSignature.dll
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\bin\Debug\net472\SignService.Common.HashSignature.pdb
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\bin\Debug\net472\BouncyCastle.Crypto.dll
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\bin\Debug\net472\itextsharp.dll
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\bin\Debug\net472\System.Text.Json.dll
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\bin\Debug\net472\System.Security.Custom.dll
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\bin\Debug\net472\WindowBaseExt.dll
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignServ.1F1D7368.Up2Date

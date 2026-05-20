@@ -7,8 +7,8 @@ using System.Security.Permissions;
 
 [assembly: AssemblyCompany("SignService.Common.HashSignature")]
 [assembly: AssemblyConfiguration("Release")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: AssemblyInformationalVersion("1.0.0")]
 [assembly: AssemblyProduct("SignService.Common.HashSignature")]
 [assembly: AssemblyTitle("SignService.Common.HashSignature")]
-[assembly: AssemblyVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.0.0")]

@@ -3,25 +3,25 @@ using System.Runtime.Serialization;
 
 namespace SignService.Common.HashSignature.Exceptions
 {
-    public class TimestampException : Exception
-    {
-    	public TimestampException()
-    	{
-    	}
+	public class TimestampException : Exception
+	{
+		public TimestampException()
+		{
+		}
 
-    	public TimestampException(string message)
-    		: base(message)
-    	{
-    	}
+		public TimestampException(string message)
+			: base(message)
+		{
+		}
 
-    	public TimestampException(string message, Exception innerException)
-    		: base(message, innerException)
-    	{
-    	}
+		public TimestampException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
 
-    	protected TimestampException(SerializationInfo info, StreamingContext context)
-    		: base(info, context)
-    	{
-    	}
-    }
+		protected TimestampException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+		}
+	}
 }
