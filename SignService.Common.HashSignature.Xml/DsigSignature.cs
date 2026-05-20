@@ -280,7 +280,7 @@ namespace SignService.Common.HashSignature.Xml
     		elementsByTagName[0].InnerText = base64Signed;
     	}
 
-    	public static void AddSignatureNode(XmlDocument doc, XmlNode signature, string parentNodePath, string nameSpace, string nameSpaceRef)
+    	public static void AddSignatureNode1(XmlDocument doc, XmlNode signature, string parentNodePath, string nameSpace, string nameSpaceRef)
     	{
     		XmlNode newChild = doc.ImportNode(signature, deep: true);
     		if (string.IsNullOrEmpty(parentNodePath))
@@ -297,7 +297,56 @@ namespace SignService.Common.HashSignature.Xml
                 throw new Exception("No parent node in document. node name=" + parentNodePath)).AppendChild(newChild);
     	}
 
-    	public static bool VerifySignature(byte[] signedDocBytes, string idSignature)
+
+        public static void AddSignatureNode(XmlDocument doc, XmlNode signature, string parentNodePath, string nameSpace, string nameSpaceRef, string signerName)
+        {
+            // 1. Sao chép node chữ ký vào tài liệu hiện tại
+            XmlNode newChild = doc.ImportNode(signature, deep: true);
+            XmlNode actualParentNode = null;
+
+            if (string.IsNullOrEmpty(parentNodePath))
+            {
+                // Nếu không có đường dẫn, cha chính là thẻ Root (DocumentElement)
+                actualParentNode = doc.DocumentElement;
+                actualParentNode.AppendChild(newChild);
+            }
+            else
+            {
+                // Tìm thẻ cha theo đường dẫn XPath và Namespace cấu hình
+                XmlNamespaceManager xmlNamespaceManager = new XmlNamespaceManager(doc.NameTable);
+                if (!string.IsNullOrEmpty(nameSpace) && !string.IsNullOrEmpty(nameSpaceRef))
+                {
+                    xmlNamespaceManager.AddNamespace(nameSpace, nameSpaceRef);
+                }
+
+                actualParentNode = doc.SelectSingleNode(parentNodePath, xmlNamespaceManager);
+                if (actualParentNode == null)
+                {
+                    throw new Exception("No parent node in document. node name=" + parentNodePath);
+                }
+
+                // Chèn node chữ ký vào làm con của thẻ cha được tìm thấy
+                actualParentNode.AppendChild(newChild);
+            }
+
+            //// --- ĐOẠN THÊM MỚI THEO Ý BẠN (CHÈN NGANG HÀNG PHÍA DƯỚI SIGNATURE) ---
+            if (actualParentNode != null)
+            {
+                // APPEND SIGNER NAME (Nằm dưới newChild)
+                XmlElement nguoiKy = doc.CreateElement("NguoiKy");
+                nguoiKy.InnerText = signerName;
+                // Chèn ngay sau thẻ Signature (newChild), lưu lại mốc vừa chèn là nodeNguoiKy
+                XmlNode nodeNguoiKy = actualParentNode.InsertAfter(nguoiKy, newChild);
+
+                // APPEND SIGN TIME (Nằm dưới nodeNguoiKy)
+                XmlElement thoiGianKy = doc.CreateElement("ThoiGianKy");
+                thoiGianKy.InnerText = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                // Chèn ngay sau thẻ NguoiKy vừa tạo để xếp thứ tự thẳng hàng xuống dưới
+                actualParentNode.InsertAfter(thoiGianKy, nodeNguoiKy);
+            }
+        }
+
+        public static bool VerifySignature(byte[] signedDocBytes, string idSignature)
     	{
     		new List<bool>();
     		XmlDocument xmlDocument = new XmlDocument();

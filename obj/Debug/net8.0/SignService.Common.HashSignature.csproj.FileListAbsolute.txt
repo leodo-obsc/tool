@@ -1,5 +1,0 @@
-E:\Loido\sign\sourcecode\obj\Debug\net8.0\SignService.Common.HashSignature.csproj.AssemblyReference.cache
-E:\Loido\sign\sourcecode\obj\Debug\net8.0\SignService.Common.HashSignature.Properties.Resources.resources
-E:\Loido\sign\sourcecode\obj\Debug\net8.0\SignService.Common.HashSignature.csproj.GenerateResource.cache
-E:\Loido\sign\sourcecode\obj\Debug\net8.0\SignService.Common.HashSignature.GeneratedMSBuildEditorConfig.editorconfig
-E:\Loido\sign\sourcecode\obj\Debug\net8.0\SignService.Common.HashSignature.csproj.CoreCompileInputs.cache

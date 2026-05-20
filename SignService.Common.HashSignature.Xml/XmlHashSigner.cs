@@ -165,7 +165,7 @@ namespace SignService.Common.HashSignature.Xml
 
                 //loido: change here
                 string subjectDN = x509Certificate.SubjectName.Decode(X500DistinguishedNameFlags.None); 
-                //string subjectDN = x509Certificate.GetNameInfo(X509NameType.SimpleName, false);
+                string nguoiKy = x509Certificate.GetNameInfo(X509NameType.SimpleName, false);
 
                 XmlNodeList elementsByTagName = _doc.GetElementsByTagName("Signature");
     			if (elementsByTagName != null && elementsByTagName.Count > 0)
@@ -249,7 +249,7 @@ namespace SignService.Common.HashSignature.Xml
     				signature = DsigSignature.CreateSignature(_hashAlgorithm, _addSigningTime ? _signingTime : DateTime.MinValue, list, "", 
                         subjectDN, Convert.ToBase64String(_signerCert), text, list2, _signId, _signTimeId);
     			}
-    			DsigSignature.AddSignatureNode(_doc, signature, _parentNode, _nameSpace, _nameSpaceRef);
+    			DsigSignature.AddSignatureNode(_doc, signature, _parentNode, _nameSpace, _nameSpaceRef, nguoiKy);
     			byte[] array = null;
     			return _secondHash = DsigSignature.GetHash(_doc, signature, alg);
     		}
