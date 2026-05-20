@@ -68,52 +68,56 @@ namespace SignService.Common.HashSignature.Xml
     		xmlNode5.AppendChild(xmlDocument.CreateElement("DigestValue")).InnerText = base64Digest;
     		xmlNode.AppendChild(xmlDocument.CreateElement("SignatureValue")).InnerText = ((base64SignatureValue == null) ? "" : base64SignatureValue);
     		XmlNode xmlNode8 = xmlNode.AppendChild(xmlDocument.CreateElement("KeyInfo"));
-    		//xmlNode8.AppendChild(xmlDocument.CreateElement("KeyValue")).InnerXml = rsaKeyValue;
+            
+            //loido:
+    		xmlNode8.AppendChild(xmlDocument.CreateElement("KeyValue")).InnerXml = rsaKeyValue;
     		XmlNode xmlNode9 = xmlNode8.AppendChild(xmlDocument.CreateElement("X509Data"));
     		
-            /////////xmlNode9.AppendChild(xmlDocument.CreateElement("X509SubjectName")).InnerText = subjectDN;
+            //loido:remove 
+            xmlNode9.AppendChild(xmlDocument.CreateElement("X509SubjectName")).InnerText = subjectDN;
     		
             xmlNode9.AppendChild(xmlDocument.CreateElement("X509Certificate")).InnerText = base64Cert.Replace("\r", "").Replace("\n", "");
     		if (signTime != DateTime.MinValue)
     		{
-                //XmlNode xmlNode10 = xmlNode.AppendChild(xmlDocument.CreateElement("Object"));
-                XmlNode parentNode = xmlNode.ParentNode;//lay node cha.
-                XmlNode xmlNode10 = parentNode.InsertAfter(xmlDocument.CreateElement("NguoiKy"), xmlNode);
-                xmlNode10.InnerText = subjectDN;
+                
+                //XmlNode parentNode = xmlNode.ParentNode;//lay node cha.
+                //XmlNode xmlNode10 = parentNode.InsertAfter(xmlDocument.CreateElement("NguoiKy"), xmlNode);
+                //xmlNode10.InnerText = subjectDN;
 
-                // 3. Chèn nextNode vào ngay PHÍA DƯỚI (phía sau) xmlNode10
-                XmlNode xmlNode11 = parentNode.InsertAfter(xmlDocument.CreateElement("ThoiGianKy"), xmlNode10);
-                xmlNode11.InnerText = signTime.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
+                //// 3. Chèn nextNode vào ngay PHÍA DƯỚI (phía sau) xmlNode10
+                //XmlNode xmlNode11 = parentNode.InsertAfter(xmlDocument.CreateElement("ThoiGianKy"), xmlNode10);
+                //xmlNode11.InnerText = signTime.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
 
 
-       //         // Thêm thuộc tính Id cho thẻ <Object> này
-       //         //XmlAttribute idAttribute = xmlDocument.CreateAttribute("Id");
-       //         //idAttribute.Value = "794ddfe0-022b-4135-adbc-3388fd37b9a3";
-       //         //xmlNode10.Attributes.Append(idAttribute);
+                XmlNode xmlNode10 = xmlNode.AppendChild(xmlDocument.CreateElement("Object"));
+                //Thêm thuộc tính Id cho thẻ<Object> này
+                XmlAttribute idAttribute = xmlDocument.CreateAttribute("Id");
+                idAttribute.Value = "794ddfe0-022b-4135-adbc-3388fd37b9a3";
+                xmlNode10.Attributes.Append(idAttribute);
 
-       //         XmlAttribute xmlAttribute8 = xmlDocument.CreateAttribute("Id");
-    			//xmlAttribute8.Value = signatureId;
-    			//xmlNode10.Attributes.Append(xmlAttribute8);
-    			//XmlNode xmlNode11 = xmlNode10.AppendChild(xmlDocument.CreateElement("SignatureProperties"));
-    			//XmlAttribute xmlAttribute9 = xmlDocument.CreateAttribute("xmlns");
-    			//xmlAttribute9.Value = "";
-    			//xmlNode11.Attributes.Append(xmlAttribute9);
-    			//XmlAttribute xmlAttribute10 = xmlDocument.CreateAttribute("Id");
-    			//xmlAttribute10.Value = "proid";
-    			//xmlNode11.Attributes.Append(xmlAttribute10);
-    			//XmlNode xmlNode12 = xmlNode11.AppendChild(xmlDocument.CreateElement("SignatureProperty"));
-    			//XmlAttribute xmlAttribute11 = xmlDocument.CreateAttribute("Target");
-    			//xmlAttribute11.Value = "#" + signatureId;
-    			//xmlNode12.Attributes.Append(xmlAttribute11);
-    			//XmlNode xmlNode13 = xmlNode12.AppendChild(xmlDocument.CreateElement("SigningTime"));
-    			//XmlAttribute xmlAttribute12 = xmlDocument.CreateAttribute("xmlns");
-    			//xmlAttribute12.Value = "http://example.org/#signatureProperties";
-    			//xmlNode13.Attributes.Append(xmlAttribute12);
-    			//XmlAttribute xmlAttribute13 = xmlDocument.CreateAttribute("Id");
-    			//xmlAttribute13.Value = signTimeID;
-    			//xmlNode13.Attributes.Append(xmlAttribute13);
-    			//xmlNode13.InnerText = signTime.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
-    		}
+                XmlAttribute xmlAttribute8 = xmlDocument.CreateAttribute("Id");
+                xmlAttribute8.Value = signatureId;
+                xmlNode10.Attributes.Append(xmlAttribute8);
+                XmlNode xmlNode11 = xmlNode10.AppendChild(xmlDocument.CreateElement("SignatureProperties"));
+                XmlAttribute xmlAttribute9 = xmlDocument.CreateAttribute("xmlns");
+                xmlAttribute9.Value = "";
+                xmlNode11.Attributes.Append(xmlAttribute9);
+                XmlAttribute xmlAttribute10 = xmlDocument.CreateAttribute("Id");
+                xmlAttribute10.Value = "proid";
+                xmlNode11.Attributes.Append(xmlAttribute10);
+                XmlNode xmlNode12 = xmlNode11.AppendChild(xmlDocument.CreateElement("SignatureProperty"));
+                XmlAttribute xmlAttribute11 = xmlDocument.CreateAttribute("Target");
+                xmlAttribute11.Value = "#" + signatureId;
+                xmlNode12.Attributes.Append(xmlAttribute11);
+                XmlNode xmlNode13 = xmlNode12.AppendChild(xmlDocument.CreateElement("SigningTime"));
+                XmlAttribute xmlAttribute12 = xmlDocument.CreateAttribute("xmlns");
+                xmlAttribute12.Value = "http://example.org/#signatureProperties";
+                xmlNode13.Attributes.Append(xmlAttribute12);
+                XmlAttribute xmlAttribute13 = xmlDocument.CreateAttribute("Id");
+                xmlAttribute13.Value = signTimeID;
+                xmlNode13.Attributes.Append(xmlAttribute13);
+                xmlNode13.InnerText = signTime.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
+            }
     		return xmlDocument.AppendChild(xmlNode);
     	}
 
@@ -167,47 +171,48 @@ namespace SignService.Common.HashSignature.Xml
     		xmlNode.AppendChild(xmlDocument.CreateElement("SignatureValue")).InnerText = ((base64SignatureValue == null) ? "" : base64SignatureValue);
     		
             XmlNode xmlNode8 = xmlNode.AppendChild(xmlDocument.CreateElement("KeyInfo"));
-            //xmlNode8.AppendChild(xmlDocument.CreateElement("KeyValue")).InnerXml = rsaKeyValue; //loido: remove rsaKeyValue
+            xmlNode8.AppendChild(xmlDocument.CreateElement("KeyValue")).InnerXml = rsaKeyValue; //loido: remove rsaKeyValue
 
             XmlNode xmlNode9 = xmlNode8.AppendChild(xmlDocument.CreateElement("X509Data"));
-    		//////////xmlNode9.AppendChild(xmlDocument.CreateElement("X509SubjectName")).InnerText = subjectDN; ////loido: remove subjectDN
+    		//loido: remove
+            xmlNode9.AppendChild(xmlDocument.CreateElement("X509SubjectName")).InnerText = subjectDN; ////loido: remove subjectDN
             
             xmlNode9.AppendChild(xmlDocument.CreateElement("X509Certificate")).InnerText = base64Cert.Replace("\r", "").Replace("\n", "");
     		if (signTime != DateTime.MinValue)
     		{
-                
-                XmlNode parentNode = xmlNode.ParentNode;//lay node cha.
-                XmlNode xmlNode10 = parentNode.InsertAfter(xmlDocument.CreateElement("NguoiKy"), xmlNode);
-                xmlNode10.InnerText = subjectDN;
 
-                // 3. Chèn nextNode vào ngay PHÍA DƯỚI (phía sau) xmlNode10
-                XmlNode xmlNode11 = parentNode.InsertAfter(xmlDocument.CreateElement("ThoiGianKy"), xmlNode10);
-                xmlNode11.InnerText = signTime.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
+                //XmlNode parentNode = xmlNode.ParentNode;//lay node cha.
+                //XmlNode xmlNode10 = parentNode.InsertAfter(xmlDocument.CreateElement("NguoiKy"), xmlNode);
+                //xmlNode10.InnerText = subjectDN;
 
-                //XmlNode xmlNode10 = xmlNode.AppendChild(xmlDocument.CreateElement("Object"));
-    			//XmlAttribute xmlAttribute8 = xmlDocument.CreateAttribute("Id");
-    			//xmlAttribute8.Value = signatureId;
-    			//xmlNode10.Attributes.Append(xmlAttribute8);
-    			//XmlNode xmlNode11 = xmlNode10.AppendChild(xmlDocument.CreateElement("SignatureProperties"));
-    			//XmlAttribute xmlAttribute9 = xmlDocument.CreateAttribute("xmlns");
-    			//xmlAttribute9.Value = "";
-    			//xmlNode11.Attributes.Append(xmlAttribute9);
-    			//XmlAttribute xmlAttribute10 = xmlDocument.CreateAttribute("Id");
-    			//xmlAttribute10.Value = "proid";
-    			//xmlNode11.Attributes.Append(xmlAttribute10);
-    			//XmlNode xmlNode12 = xmlNode11.AppendChild(xmlDocument.CreateElement("SignatureProperty"));
-    			//XmlAttribute xmlAttribute11 = xmlDocument.CreateAttribute("Target");
-    			//xmlAttribute11.Value = "#" + signatureId;
-    			//xmlNode12.Attributes.Append(xmlAttribute11);
-    			//XmlNode xmlNode13 = xmlNode12.AppendChild(xmlDocument.CreateElement("SigningTime"));
-    			//XmlAttribute xmlAttribute12 = xmlDocument.CreateAttribute("xmlns");
-    			//xmlAttribute12.Value = "http://example.org/#signatureProperties";
-    			//xmlNode13.Attributes.Append(xmlAttribute12);
-    			//XmlAttribute xmlAttribute13 = xmlDocument.CreateAttribute("Id");
-    			//xmlAttribute13.Value = signTimeID;
-    			//xmlNode13.Attributes.Append(xmlAttribute13);
-    			//xmlNode13.InnerText = signTime.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
-    		}
+                //// 3. Chèn nextNode vào ngay PHÍA DƯỚI (phía sau) xmlNode10
+                //XmlNode xmlNode11 = parentNode.InsertAfter(xmlDocument.CreateElement("ThoiGianKy"), xmlNode10);
+                //xmlNode11.InnerText = signTime.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
+
+                XmlNode xmlNode10 = xmlNode.AppendChild(xmlDocument.CreateElement("Object"));
+                XmlAttribute xmlAttribute8 = xmlDocument.CreateAttribute("Id");
+                xmlAttribute8.Value = signatureId;
+                xmlNode10.Attributes.Append(xmlAttribute8);
+                XmlNode xmlNode11 = xmlNode10.AppendChild(xmlDocument.CreateElement("SignatureProperties"));
+                XmlAttribute xmlAttribute9 = xmlDocument.CreateAttribute("xmlns");
+                xmlAttribute9.Value = "";
+                xmlNode11.Attributes.Append(xmlAttribute9);
+                XmlAttribute xmlAttribute10 = xmlDocument.CreateAttribute("Id");
+                xmlAttribute10.Value = "proid";
+                xmlNode11.Attributes.Append(xmlAttribute10);
+                XmlNode xmlNode12 = xmlNode11.AppendChild(xmlDocument.CreateElement("SignatureProperty"));
+                XmlAttribute xmlAttribute11 = xmlDocument.CreateAttribute("Target");
+                xmlAttribute11.Value = "#" + signatureId;
+                xmlNode12.Attributes.Append(xmlAttribute11);
+                XmlNode xmlNode13 = xmlNode12.AppendChild(xmlDocument.CreateElement("SigningTime"));
+                XmlAttribute xmlAttribute12 = xmlDocument.CreateAttribute("xmlns");
+                xmlAttribute12.Value = "http://example.org/#signatureProperties";
+                xmlNode13.Attributes.Append(xmlAttribute12);
+                XmlAttribute xmlAttribute13 = xmlDocument.CreateAttribute("Id");
+                xmlAttribute13.Value = signTimeID;
+                xmlNode13.Attributes.Append(xmlAttribute13);
+                xmlNode13.InnerText = signTime.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
+            }
     		return xmlDocument.AppendChild(xmlNode);
     	}
 

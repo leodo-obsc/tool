@@ -164,8 +164,8 @@ namespace SignService.Common.HashSignature.Xml
     			text = x509Certificate.GetRSAPublicKey().ToXmlString(includePrivateParameters: false);
 
                 //loido: change here
-                //string subjectDN = x509Certificate.SubjectName.Decode(X500DistinguishedNameFlags.None); 
-                string subjectDN = x509Certificate.GetNameInfo(X509NameType.SimpleName, false);
+                string subjectDN = x509Certificate.SubjectName.Decode(X500DistinguishedNameFlags.None); 
+                //string subjectDN = x509Certificate.GetNameInfo(X509NameType.SimpleName, false);
 
                 XmlNodeList elementsByTagName = _doc.GetElementsByTagName("Signature");
     			if (elementsByTagName != null && elementsByTagName.Count > 0)

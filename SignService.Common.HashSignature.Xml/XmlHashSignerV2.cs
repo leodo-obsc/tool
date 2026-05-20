@@ -351,7 +351,7 @@ namespace SignService.Common.HashSignature.Xml
     		keyInfoX509Data.AddSubjectName(_signer.Subject);
     		
             //loido: remove this
-            //keyInfo.AddClause(new RSAKeyValue(new X509Certificate2(_signer.GetRawCertData()).GetRSAPublicKey()));
+            keyInfo.AddClause(new RSAKeyValue(new X509Certificate2(_signer.GetRawCertData()).GetRSAPublicKey()));
     		keyInfo.AddClause(keyInfoX509Data);
     		remoteSignedXml.KeyInfo = keyInfo;
     		remoteSignedXml.Signature.Id = _signatureId.ToString();
