@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>SignService.Common.HashSignature</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>14.0</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\net8.0\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Custom">
+      <HintPath>..\net8.0\System.Security.Custom.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>..\net8.0\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowBaseExt">
+      <HintPath>..\net8.0\WindowBaseExt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Xml">
+      <HintPath>..\net8.0\System.Security.Cryptography.Xml.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
