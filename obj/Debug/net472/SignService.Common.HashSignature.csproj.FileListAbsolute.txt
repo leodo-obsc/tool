@@ -21,3 +21,11 @@ E:\Loido\sign\sourcecode\obj\Debug\net472\SignService.Common.HashSignature.cspro
 E:\Loido\sign\sourcecode\obj\Debug\net472\SignServ.1F1D7368.Up2Date
 E:\Loido\sign\sourcecode\obj\Debug\net472\SignService.Common.HashSignature.dll
 E:\Loido\sign\sourcecode\obj\Debug\net472\SignService.Common.HashSignature.pdb
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.csproj.AssemblyReference.cache
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.Properties.Resources.resources
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.csproj.GenerateResource.cache
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.csproj.CoreCompileInputs.cache
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.sourcelink.json
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.dll
+C:\Users\Admin808b975636\source\repos\leodo-obsc\tool\obj\Debug\net472\SignService.Common.HashSignature.pdb
