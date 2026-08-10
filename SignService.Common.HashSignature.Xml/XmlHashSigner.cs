@@ -194,11 +194,18 @@ namespace SignService.Common.HashSignature.Xml
     			List<string> list2 = new List<string>();
     			string text2 = null;
     			XmlNode signature;
+                byte[] justForTestHash = null;
+
     			if (_referencesId.Count == 0)
     			{
-    				text2 = Convert.ToBase64String(DsigSignature.GetC14NDigest(_doc, alg));
-    				signature = DsigSignature.CreateSignature(_hashAlgorithm, _addSigningTime ? _signingTime : DateTime.MinValue, text2, "", 
-                        subjectDN, Convert.ToBase64String(_signerCert), text, _signId, _referenceId, _signTimeId);
+                    justForTestHash = DsigSignature.GetC14NDigest(_doc, alg);
+
+                    text2 = Convert.ToBase64String(justForTestHash);
+
+    				signature = DsigSignature.CreateSignature(_hashAlgorithm, _addSigningTime ? _signingTime : DateTime.MinValue, 
+                        text2, "", 
+                        subjectDN, Convert.ToBase64String(_signerCert), 
+                        text, _signId, _referenceId, _signTimeId);
     			}
     			else
     			{
@@ -253,8 +260,16 @@ namespace SignService.Common.HashSignature.Xml
     			}
     			DsigSignature.AddSignatureNode(_doc, signature, _parentNode, _nameSpace, _nameSpaceRef, nguoiKy);
     			byte[] array = null;
-    			return _secondHash = DsigSignature.GetHash(_doc, signature, alg);
-    		}
+                
+                //loido: just for logging
+                string xmlContentToLog = _doc.OuterXml.Replace("\r", "");
+                Console.WriteLine(xmlContentToLog);
+
+                //return _secondHash = DsigSignature.GetHash(_doc, signature, alg);
+
+                //just for testing
+                return _secondHash = justForTestHash;
+            }
     		catch (Exception ex)
     		{
     			throw ex;

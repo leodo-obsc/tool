@@ -21,6 +21,21 @@ namespace SignService.Common.HashSignature.Xml
     		Server
     	}
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="alg"></param>
+        /// <param name="signTime"></param>
+        /// <param name="base64Digest">Digiest Value</param>
+        /// <param name="base64SignatureValue">Signature Value</param>
+        /// <param name="subjectDN"></param>
+        /// <param name="base64Cert"></param>
+        /// <param name="rsaKeyValue"></param>
+        /// <param name="signatureId"></param>
+        /// <param name="referenceUri"></param>
+        /// <param name="signTimeID"></param>
+        /// <returns></returns>
     	public static XmlNode CreateSignature(
             MessageDigestAlgorithm alg, 
             DateTime signTime, 
@@ -102,16 +117,7 @@ namespace SignService.Common.HashSignature.Xml
     		
             xmlNode9.AppendChild(xmlDocument.CreateElement("X509Certificate")).InnerText = base64Cert.Replace("\r", "").Replace("\n", "");
     		if (signTime != DateTime.MinValue)
-    		{
-                
-                //XmlNode parentNode = xmlNode.ParentNode;//lay node cha.
-                //XmlNode xmlNode10 = parentNode.InsertAfter(xmlDocument.CreateElement("NguoiKy"), xmlNode);
-                //xmlNode10.InnerText = subjectDN;
-
-                //// 3. Chèn nextNode vào ngay PHÍA DƯỚI (phía sau) xmlNode10
-                //XmlNode xmlNode11 = parentNode.InsertAfter(xmlDocument.CreateElement("ThoiGianKy"), xmlNode10);
-                //xmlNode11.InnerText = signTime.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
-
+    		{                                
 
                 XmlNode xmlNode10 = xmlNode.AppendChild(xmlDocument.CreateElement("Object"));
                 //Thêm thuộc tính Id cho thẻ<Object> này
@@ -346,22 +352,22 @@ namespace SignService.Common.HashSignature.Xml
     		elementsByTagName[0].InnerText = base64Signed;
     	}
 
-    	public static void AddSignatureNode1(XmlDocument doc, XmlNode signature, string parentNodePath, string nameSpace, string nameSpaceRef)
-    	{
-    		XmlNode newChild = doc.ImportNode(signature, deep: true);
-    		if (string.IsNullOrEmpty(parentNodePath))
-    		{
-    			doc.DocumentElement.AppendChild(newChild);
-    			return;
-    		}
-    		XmlNamespaceManager xmlNamespaceManager = new XmlNamespaceManager(doc.NameTable);
-    		if (!string.IsNullOrEmpty(nameSpace) && !string.IsNullOrEmpty(nameSpaceRef))
-    		{
-    			xmlNamespaceManager.AddNamespace(nameSpace, nameSpaceRef);
-    		}
-    		(((XmlElement)doc.SelectSingleNode(parentNodePath, xmlNamespaceManager)) ?? 
-                throw new Exception("No parent node in document. node name=" + parentNodePath)).AppendChild(newChild);
-    	}
+        //public static void AddSignatureNode(XmlDocument doc, XmlNode signature, string parentNodePath, string nameSpace, string nameSpaceRef)
+        //{
+        //	XmlNode newChild = doc.ImportNode(signature, deep: true);
+        //	if (string.IsNullOrEmpty(parentNodePath))
+        //	{
+        //		doc.DocumentElement.AppendChild(newChild);
+        //		return;
+        //	}
+        //	XmlNamespaceManager xmlNamespaceManager = new XmlNamespaceManager(doc.NameTable);
+        //	if (!string.IsNullOrEmpty(nameSpace) && !string.IsNullOrEmpty(nameSpaceRef))
+        //	{
+        //		xmlNamespaceManager.AddNamespace(nameSpace, nameSpaceRef);
+        //	}
+        //	(((XmlElement)doc.SelectSingleNode(parentNodePath, xmlNamespaceManager)) ?? 
+        //           throw new Exception("No parent node in document. node name=" + parentNodePath)).AppendChild(newChild);
+        //}
 
 
         public static void AddSignatureNode(XmlDocument doc, XmlNode signature, string parentNodePath, string nameSpace, string nameSpaceRef, string signerName)
@@ -480,7 +486,15 @@ namespace SignService.Common.HashSignature.Xml
     		XmlDocument xmlDocument2 = new XmlDocument();
     		xmlDocument2.LoadXml(elementsByTagName[0].OuterXml);
     		Utils.AddNamespaces(namespaces: Utils.GetPropagatedAttributes(xdoc.DocumentElement), elem: xmlDocument2.DocumentElement);
-    		return GetC14NDigest(xmlDocument2, alg);
+
+            // 👇 CHÈN CODE LOG VÀO ĐÂY
+            string signedInfoXml = xmlDocument2.OuterXml;
+            Console.WriteLine("--- LOG SIGNEDINFO ---");
+            Console.WriteLine(signedInfoXml);
+            Console.WriteLine("----------------------");
+            // 👆 CHÈN CODE LOG VÀO ĐÂY
+
+            return GetC14NDigest(xmlDocument2, alg);
     	}
 
     	//public static byte[] GetC14NDigest(XmlNode xn, XmlDocument doc, HashAlgorithm alg)
@@ -509,12 +523,89 @@ namespace SignService.Common.HashSignature.Xml
             return GetC14NDigest(xmlDocument, alg);
         }
 
+        //public static byte[] GetC14NDigest1(XmlDocument xdoc, HashAlgorithm alg)
+        //{
+        //    // 1. Tìm thẻ DanhSachNguoiKy trong đối tượng xdoc
+        //    XmlNode nodeToDelete = xdoc.SelectSingleNode("//DanhSachNguoiKy");
 
+        //    // 2. Nếu tìm thấy thì thực hiện xóa nó ra khỏi cây thư mục XML
+        //    if (nodeToDelete != null)
+        //    {
+        //        nodeToDelete.ParentNode.RemoveChild(nodeToDelete);
+        //    }
+
+        //    // Lúc này xmlGocText sẽ không còn chứa thẻ DanhSachNguoiKy nữa
+        //    string xmlGocText = xdoc.OuterXml;
+
+        //    var xmlDsigC14NTransform = new gb::System.Security.Cryptography.Xml.XmlDsigC14NTransform();
+        //    xmlDsigC14NTransform.LoadInput(xdoc);
+        //    return xmlDsigC14NTransform.GetDigestedOutput(alg);
+        //}
+
+        //public static byte[] GetC14NDigest(XmlDocument xdoc, HashAlgorithm alg)
+        //{
+        //    // 1. Tạo một bản sao độc lập trong bộ nhớ RAM
+        //    XmlDocument clonedDoc = (XmlDocument)xdoc.Clone();
+
+        //    // 2. Tìm và xóa thẻ DanhSachNguoiKy trên bản sao (clonedDoc)
+        //    XmlNode nodeToDelete = clonedDoc.SelectSingleNode("//DanhSachNguoiKy");
+        //    if (nodeToDelete != null)
+        //    {
+        //        nodeToDelete.ParentNode.RemoveChild(nodeToDelete);
+        //    }
+
+        //    // 3. Nạp bản sao đã làm sạch vào để tính toán mã băm
+        //    var xmlDsigC14NTransform = new gb::System.Security.Cryptography.Xml.XmlDsigC14NTransform();
+        //    xmlDsigC14NTransform.LoadInput(clonedDoc);
+
+        //    // xdoc gốc bên ngoài của bạn vẫn giữ nguyên vẹn 100%
+        //    return xmlDsigC14NTransform.GetDigestedOutput(alg);
+        //}
+
+
+        /// <summary>
+        /// xóa DanhSachNguoiKy trên xml tạm để giữ gốc
+        /// </summary>
+        /// <param name="xdoc"></param>
+        /// <param name="alg"></param>
+        /// <returns></returns>
         public static byte[] GetC14NDigest(XmlDocument xdoc, HashAlgorithm alg)
-    	{
-    		var xmlDsigC14NTransform = new gb::System.Security.Cryptography.Xml.XmlDsigC14NTransform();
-    		xmlDsigC14NTransform.LoadInput(xdoc);
-    		return xmlDsigC14NTransform.GetDigestedOutput(alg);
-    	}
+        {
+            // Clone chuẩn để giữ nguyên whitespace
+            XmlDocument clonedDoc = new XmlDocument();
+            clonedDoc.PreserveWhitespace = true;
+            clonedDoc.LoadXml(xdoc.OuterXml);
+
+            // Xóa tất cả DanhSachNguoiKy
+            XmlNodeList signerNodes = clonedDoc.GetElementsByTagName("DanhSachNguoiKy");
+
+            while (signerNodes.Count > 0)
+            {
+                XmlNode node = signerNodes[0];
+
+                if (node.ParentNode != null)
+                {
+                    node.ParentNode.RemoveChild(node);
+                }
+            }
+
+            // Canonicalize
+            var c14n = new gb::System.Security.Cryptography.Xml.XmlDsigC14NTransform();
+
+            c14n.LoadInput(clonedDoc);
+
+            // SHA256 digest
+            return c14n.GetDigestedOutput(alg);
+        }
+
+        public static string GetDigestBase64(XmlDocument xdoc)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] digest = GetC14NDigest(xdoc, sha256);
+
+                return Convert.ToBase64String(digest);
+            }
+        }
     }
 }
