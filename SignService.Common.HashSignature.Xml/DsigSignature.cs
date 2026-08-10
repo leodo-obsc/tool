@@ -1,15 +1,14 @@
 ﻿//extern alias CustomSec; // Định danh cho file Custom của bạn
 extern alias gb;    // Định danh cho thư viện chuẩn của Microsoft
-
-
+using SignService.Common.HashSignature.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.Xml;
 using System.Xml;
-using SignService.Common.HashSignature.Common;
 //using System.Security.Cryptography.Xml;
 
 namespace SignService.Common.HashSignature.Xml
@@ -22,7 +21,9 @@ namespace SignService.Common.HashSignature.Xml
     		Server
     	}
 
-    	public static XmlNode CreateSignature(MessageDigestAlgorithm alg, DateTime signTime, 
+    	public static XmlNode CreateSignature(
+            MessageDigestAlgorithm alg, 
+            DateTime signTime, 
             string base64Digest, 
             string base64SignatureValue, 
             string subjectDN, 
@@ -47,30 +48,53 @@ namespace SignService.Common.HashSignature.Xml
     		XmlNode xmlNode4 = xmlNode2.AppendChild(xmlDocument.CreateElement("SignatureMethod"));
             
             //loido: just hard this
-            ((XmlElement)xmlNode4).SetAttribute("AlgMethod", "RSA-SHA256");
+            //((XmlElement)xmlNode4).SetAttribute("AlgMethod", "RSA-SHA256");
             XmlAttribute xmlAttribute4 = xmlDocument.CreateAttribute("Algorithm");
     		xmlAttribute4.Value = _getSignatureAlg(alg);
     		xmlNode4.Attributes.Append(xmlAttribute4);
-            
+
 
             XmlNode xmlNode5 = xmlNode2.AppendChild(xmlDocument.CreateElement("Reference"));
-    		XmlAttribute xmlAttribute5 = xmlDocument.CreateAttribute("URI");
-    		xmlAttribute5.Value = referenceUri;
-    		xmlNode5.Attributes.Append(xmlAttribute5);
-    		XmlNode xmlNode6 = xmlNode5.AppendChild(xmlDocument.CreateElement("Transforms")).AppendChild(xmlDocument.CreateElement("Transform"));
-    		XmlAttribute xmlAttribute6 = xmlDocument.CreateAttribute("Algorithm");
-    		xmlAttribute6.Value = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
-    		xmlNode6.Attributes.Append(xmlAttribute6);
-    		XmlNode xmlNode7 = xmlNode5.AppendChild(xmlDocument.CreateElement("DigestMethod"));
-    		XmlAttribute xmlAttribute7 = xmlDocument.CreateAttribute("Algorithm");
-    		xmlAttribute7.Value = _getDigestMethod(alg);
-    		xmlNode7.Attributes.Append(xmlAttribute7);
-    		xmlNode5.AppendChild(xmlDocument.CreateElement("DigestValue")).InnerText = base64Digest;
-    		xmlNode.AppendChild(xmlDocument.CreateElement("SignatureValue")).InnerText = ((base64SignatureValue == null) ? "" : base64SignatureValue);
-    		XmlNode xmlNode8 = xmlNode.AppendChild(xmlDocument.CreateElement("KeyInfo"));
-            
+            XmlAttribute xmlAttribute5 = xmlDocument.CreateAttribute("URI");
+            xmlAttribute5.Value = referenceUri;
+            xmlNode5.Attributes.Append(xmlAttribute5);
+
+            // 1. Tạo thẻ mẹ gốc Transforms
+            XmlNode xmlTransforms = xmlNode5.AppendChild(xmlDocument.CreateElement("Transforms"));
+
+            // 2. Thêm Transform 1: Enveloped Signature (Giữ nguyên của bạn)
+            XmlNode xmlNode6 = xmlTransforms.AppendChild(xmlDocument.CreateElement("Transform"));
+            XmlAttribute xmlAttribute6 = xmlDocument.CreateAttribute("Algorithm");
+            xmlAttribute6.Value = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
+            xmlNode6.Attributes.Append(xmlAttribute6);
+
+            // ==================== KHÚC THÊM MỚI VÀO ĐÂY ====================
+            // 3. Thêm Transform 2: Lệnh XPath thông báo loại bỏ thẻ DanhSachNguoiKy cho các hệ thống khác
+            XmlNode xmlXPathTransform = xmlTransforms.AppendChild(xmlDocument.CreateElement("Transform"));
+            XmlAttribute xmlXPathAlg = xmlDocument.CreateAttribute("Algorithm");
+            xmlXPathAlg.Value = "http://www.w3.org/TR/1999/REC-xpath-19991116"; // Định danh thuật toán XPath Filter
+            xmlXPathTransform.Attributes.Append(xmlXPathAlg);
+
+            // Tạo thẻ con <XPath> nằm bên trong thẻ <Transform> vừa tạo
+            XmlNode xmlXPathElement = xmlXPathTransform.AppendChild(xmlDocument.CreateElement("XPath"));
+            xmlXPathElement.InnerText = "not(ancestor-or-self::DanhSachNguoiKy)";
+            // ===============================================================
+
+            // 4. Tiếp tục tạo các thành phần phía sau (Giữ nguyên của bạn)
+            XmlNode xmlNode7 = xmlNode5.AppendChild(xmlDocument.CreateElement("DigestMethod"));
+            XmlAttribute xmlAttribute7 = xmlDocument.CreateAttribute("Algorithm");
+            xmlAttribute7.Value = _getDigestMethod(alg);
+            xmlNode7.Attributes.Append(xmlAttribute7);
+
+            xmlNode5.AppendChild(xmlDocument.CreateElement("DigestValue")).InnerText = base64Digest;
+            xmlNode.AppendChild(xmlDocument.CreateElement("SignatureValue")).InnerText = ((base64SignatureValue == null) ? "" : base64SignatureValue);
+            XmlNode xmlNode8 = xmlNode.AppendChild(xmlDocument.CreateElement("KeyInfo"));
+
+
+
+
             //loido:
-    		xmlNode8.AppendChild(xmlDocument.CreateElement("KeyValue")).InnerXml = rsaKeyValue;
+            xmlNode8.AppendChild(xmlDocument.CreateElement("KeyValue")).InnerXml = rsaKeyValue;
     		XmlNode xmlNode9 = xmlNode8.AppendChild(xmlDocument.CreateElement("X509Data"));
     		
             //loido:remove 
@@ -121,7 +145,28 @@ namespace SignService.Common.HashSignature.Xml
     		return xmlDocument.AppendChild(xmlNode);
     	}
 
-    	public static XmlNode CreateSignature(MessageDigestAlgorithm alg, DateTime signTime, 
+
+        //public static void AddXPathTransform(XmlDocument xmlDocument, Reference reference)
+        //{
+        //    // XPath transform chuẩn XMLDSig
+        //    XmlDsigXPathTransform xpathTransform = new XmlDsigXPathTransform();
+
+        //    // XPath expression (loại bỏ DanhSachNguoiKy)
+        //    XmlDocument xpathDoc = new XmlDocument();
+
+        //    xpathDoc.LoadXml(@"
+        //    <XPath xmlns='http://www.w3.org/2000/09/xmldsig#'>
+        //        not(ancestor-or-self::DanhSachNguoiKy)
+        //    </XPath>");
+
+        //    // load XPath vào transform
+        //    xpathTransform.LoadInnerXml(xpathDoc.ChildNodes);
+
+        //    // add transform vào reference
+        //    reference.AddTransform(xpathTransform);
+        //}
+
+        public static XmlNode CreateSignature(MessageDigestAlgorithm alg, DateTime signTime, 
             List<string> listReference, 
             string base64SignatureValue, 
             string subjectDN, 
@@ -153,22 +198,43 @@ namespace SignService.Common.HashSignature.Xml
     		xmlNode4.Attributes.Append(xmlAttribute4);
     		for (int i = 0; i < listReference.Count; i++)
     		{
-    			XmlNode xmlNode5 = xmlNode2.AppendChild(xmlDocument.CreateElement("Reference"));
-    			XmlAttribute xmlAttribute5 = xmlDocument.CreateAttribute("URI");
-    			xmlAttribute5.Value = "#" + listUri[i];
-    			xmlNode5.Attributes.Append(xmlAttribute5);
-    			XmlNode xmlNode6 = xmlNode5.AppendChild(xmlDocument.CreateElement("Transforms")).AppendChild(xmlDocument.CreateElement("Transform"));
-    			XmlAttribute xmlAttribute6 = xmlDocument.CreateAttribute("Algorithm");
-    			xmlAttribute6.Value = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
-    			xmlNode6.Attributes.Append(xmlAttribute6);
-    			XmlNode xmlNode7 = xmlNode5.AppendChild(xmlDocument.CreateElement("DigestMethod"));
-    			XmlAttribute xmlAttribute7 = xmlDocument.CreateAttribute("Algorithm");
-    			xmlAttribute7.Value = _getDigestMethod(alg);
-    			xmlNode7.Attributes.Append(xmlAttribute7);
-    			xmlNode5.AppendChild(xmlDocument.CreateElement("DigestValue")).InnerText = listReference[i];
-    		}
+                XmlNode xmlNode5 = xmlNode2.AppendChild(xmlDocument.CreateElement("Reference"));
+                XmlAttribute xmlAttribute5 = xmlDocument.CreateAttribute("URI");
+                xmlAttribute5.Value = "#" + listUri[i];
+                xmlNode5.Attributes.Append(xmlAttribute5);
 
-    		xmlNode.AppendChild(xmlDocument.CreateElement("SignatureValue")).InnerText = ((base64SignatureValue == null) ? "" : base64SignatureValue);
+                // 1. Tạo thẻ gốc Transforms
+                XmlNode xmlTransforms = xmlNode5.AppendChild(xmlDocument.CreateElement("Transforms"));
+
+                // 2. Thêm Transform 1: Enveloped Signature
+                XmlNode xmlNode6 = xmlTransforms.AppendChild(xmlDocument.CreateElement("Transform"));
+                XmlAttribute xmlAttribute6 = xmlDocument.CreateAttribute("Algorithm");
+                xmlAttribute6.Value = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
+                xmlNode6.Attributes.Append(xmlAttribute6);
+
+                // ==================== KHÚC THÊM VÀO ĐÂY ====================
+                // 3. Thêm Transform 2: XPath Loại bỏ thẻ DanhSachNguoiKy
+                XmlNode xmlXPathTransform = xmlTransforms.AppendChild(xmlDocument.CreateElement("Transform"));
+                XmlAttribute xmlXPathAlg = xmlDocument.CreateAttribute("Algorithm");
+                xmlXPathAlg.Value = "http://w3.org"; // Thuật toán XPath Filter
+                xmlXPathTransform.Attributes.Append(xmlXPathAlg);
+
+                // Tạo thẻ con <XPath> nằm bên trong thẻ <Transform> vừa tạo
+                XmlNode xmlXPathElement = xmlXPathTransform.AppendChild(xmlDocument.CreateElement("XPath"));
+                xmlXPathElement.InnerText = "not(ancestor-or-self::DanhSachNguoiKy)";
+                // ===========================================================
+
+                // 4. Tiếp tục tạo các thành phần tiếp theo như cũ
+                XmlNode xmlNode7 = xmlNode5.AppendChild(xmlDocument.CreateElement("DigestMethod"));
+                XmlAttribute xmlAttribute7 = xmlDocument.CreateAttribute("Algorithm");
+                xmlAttribute7.Value = _getDigestMethod(alg);
+                xmlNode7.Attributes.Append(xmlAttribute7);
+
+                xmlNode5.AppendChild(xmlDocument.CreateElement("DigestValue")).InnerText = listReference[i];
+
+            }
+
+            xmlNode.AppendChild(xmlDocument.CreateElement("SignatureValue")).InnerText = ((base64SignatureValue == null) ? "" : base64SignatureValue);
     		
             XmlNode xmlNode8 = xmlNode.AppendChild(xmlDocument.CreateElement("KeyInfo"));
             xmlNode8.AppendChild(xmlDocument.CreateElement("KeyValue")).InnerXml = rsaKeyValue; //loido: remove rsaKeyValue
@@ -417,15 +483,34 @@ namespace SignService.Common.HashSignature.Xml
     		return GetC14NDigest(xmlDocument2, alg);
     	}
 
-    	public static byte[] GetC14NDigest(XmlNode xn, XmlDocument doc, HashAlgorithm alg)
-    	{
-    		XmlDocument xmlDocument = new XmlDocument();
-    		xmlDocument.LoadXml(xn.OuterXml);
-    		Utils.AddNamespaces(namespaces: Utils.GetPropagatedAttributes(doc.DocumentElement), elem: xmlDocument.DocumentElement);
-    		return GetC14NDigest(xmlDocument, alg);
-    	}
+    	//public static byte[] GetC14NDigest(XmlNode xn, XmlDocument doc, HashAlgorithm alg)
+    	//{
+    	//	XmlDocument xmlDocument = new XmlDocument();
+    	//	xmlDocument.LoadXml(xn.OuterXml);
+    	//	Utils.AddNamespaces(namespaces: Utils.GetPropagatedAttributes(doc.DocumentElement), elem: xmlDocument.DocumentElement);
+    	//	return GetC14NDigest(xmlDocument, alg);
+    	//}
 
-    	public static byte[] GetC14NDigest(XmlDocument xdoc, HashAlgorithm alg)
+        public static byte[] GetC14NDigest(XmlNode xn, XmlDocument doc, HashAlgorithm alg)
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(xn.OuterXml);
+
+            // ==================== KHÚC THÊM VÀO ĐỂ XÓA MANUAL ĐỂ BĂM CHÍNH XÁC ====================
+            // Tìm thẻ DanhSachNguoiKy trong node hiện tại để xóa trước khi băm
+            XmlNode nodeToDelete = xmlDocument.SelectSingleNode("//DanhSachNguoiKy");
+            if (nodeToDelete != null)
+            {
+                nodeToDelete.ParentNode.RemoveChild(nodeToDelete);
+            }
+            // ======================================================================================
+
+            Utils.AddNamespaces(namespaces: Utils.GetPropagatedAttributes(doc.DocumentElement), elem: xmlDocument.DocumentElement);
+            return GetC14NDigest(xmlDocument, alg);
+        }
+
+
+        public static byte[] GetC14NDigest(XmlDocument xdoc, HashAlgorithm alg)
     	{
     		var xmlDsigC14NTransform = new gb::System.Security.Cryptography.Xml.XmlDsigC14NTransform();
     		xmlDsigC14NTransform.LoadInput(xdoc);

@@ -246,6 +246,8 @@ namespace SignService.Common.HashSignature.Xml
     					list.Add(text2);
     					list2.Add(text3);
     				}
+
+
     				signature = DsigSignature.CreateSignature(_hashAlgorithm, _addSigningTime ? _signingTime : DateTime.MinValue, list, "", 
                         subjectDN, Convert.ToBase64String(_signerCert), text, list2, _signId, _signTimeId);
     			}
